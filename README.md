@@ -1,7 +1,7 @@
 # ESP32_FPC1020
 ESP32 library for the FPC1020a
 
-Main change from origional is it uses ESP32 HarwareSerial instead of SoftwareSerial
+Main change from original is it uses ESP32 HarwareSerial instead of SoftwareSerial
 
 
 # Origin
