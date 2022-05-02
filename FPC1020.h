@@ -1,18 +1,14 @@
 //
 //  FPC1020.h
-//  Created by Deray on 2015-10-07.
+//  Created by Deray on 2015-10-07 based on Adafruit library
+//  Modified to use HardwareSerial on ESP32 by JohnJJG 2020/10/26
 //
 
 #ifndef FPC1020_h
 #define FPC1020_h
 
-#ifdef __AVR__
-  #if ARDUINO >= 100
-    #include <SoftwareSerial.h>
-  #else
-    #include <NewSoftSerial.h>
-  #endif
-#endif
+//#include <SoftwareSerial.h>
+#include <HardwareSerial.h>
 
 #define TRUE  0x01
 #define FALSE  0x00
@@ -42,7 +38,7 @@ class FPC1020
 {
     public:
     
-    FPC1020(SoftwareSerial *ser);
+    FPC1020(HardwareSerial *ser);
     unsigned char Enroll(unsigned int u_id);
     unsigned char Clear(void);
     unsigned char Delete(unsigned int u_id);
