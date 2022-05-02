@@ -1,6 +1,7 @@
 //
 //  FPC1020.cpp
-//  Created by Deray on 2015-10-07.
+//  Created by Deray on 2015-10-07 based on Adafruit library
+//  Modified to use HardwareSerial on ESP32 by JohnJJG 2020/10/26
 //
 
 #include "FPC1020.h"
@@ -15,11 +16,12 @@ unsigned char g_ucUartRxEnd ;      //Receive return data end flag
 unsigned char g_ucUartRxLen ;      //Receive return data length
 unsigned char l_ucFPID =1;         //User ID
 
-SoftwareSerial *mySerial = NULL;
+HardwareSerial *mySerial = NULL;
 
-FPC1020::FPC1020(SoftwareSerial *ser) {
+FPC1020::FPC1020(HardwareSerial *ser) {
   mySerial = ser; // ...override gpsHwSerial with value passed.
-  mySerial->begin(19200);
+//  mySerial.begin(19200, SERIAL_8N1, 16, 17);  // speed, type, RX(16), TX(17)
+//  mySerial->begin(19200);
 }
 
 //Function：wait data packet send finish
@@ -27,8 +29,15 @@ unsigned char FPC1020::WaitFpData(void)
 {
     int i;
     unsigned char rBuf_p = 0;
-    
-    while(mySerial->available()<= 0);
+    long timeStart = millis();
+  
+    while(mySerial->available()<= 0)
+    {
+      // only check for 50 milliseconds
+      if ((millis() > timeStart + 200))
+        return FALSE;
+    }
+
     
     for(i=200; i>0; i--)//wait response info
     {
@@ -160,7 +169,7 @@ unsigned char FPC1020::Check_Package(unsigned char cmd)
 unsigned char FPC1020::Search(void)
 {
 	unsigned char buf[BUF_N];
-  
+
     *buf = CMD_SEARCH;          //1:N comparison
     *(buf+1) = 0x00;
     *(buf+2) = 0x00;
